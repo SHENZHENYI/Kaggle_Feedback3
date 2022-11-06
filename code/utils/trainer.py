@@ -187,7 +187,7 @@ class Trainer:
             all_predictions.add_batch(outputs['labels'])
             all_groudtruths.add_batch(batch['labels'])
             val_losses_epoch.update(losses['loss'])
-            break
+
         epoch_time = time.time() - start
 
         score = self.metric(torch.stack(all_groudtruths.all).numpy(),
@@ -208,7 +208,7 @@ class Trainer:
         self.train_loader = self.get_train_loader(self.train_samples, self.model)
         self.val_loader = self.get_val_loader(self.val_samples, self.model)
         for epoch in range(self.cfg.epoch):
-            #self.train_epoch()
+            self.train_epoch()
             self.val_epoch()
             self.epochs_done = epoch
             if self.cur_score <= self.best_score:
@@ -220,7 +220,7 @@ class Trainer:
     def save_best_model(self):
         torch.save({'model': self.model.state_dict(),
                     'score': self.best_score},
-                    self.cfg.training_dir+f"{self.cfg.model.replace('/', '-')}_fold{self.fold}_best.pth")
+                    os.path.join(self.cfg.training_dir, f"{self.cfg.model.replace('/', '-')}_fold{self.fold}_best.pth"))
 
     @staticmethod
     def get_optimizer(model) -> torch.optim.Optimizer:
