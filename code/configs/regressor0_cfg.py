@@ -7,8 +7,8 @@ class SimpleRegressorConfig():
     seed: int = 1997
     n_fold: int = 5
     target_columns: List[str] = field(default_factory=lambda: ['cohesion', 'syntax', 'vocabulary', 'phraseology', 'grammar', 'conventions'])
-    data_dir: str = '../data/fb3/'
-    training_dir: str = '/Users/zhenyishen/Documents/doc-mba/GitHub/Kaggle_Feedback3/code/outputs'
+    data_dir: str = '../data/fb3'
+    training_dir: str = './outputs'
     model: str = "microsoft/deberta-v3-base"
     criterion: str = 'l1'
     plm_size: int = 768
@@ -26,7 +26,7 @@ class SimpleRegressorConfig():
     scheduler: str = 'cosine'
     warmup_ratio: float = 0.1
     num_cycles: int = 5
-    device: str = 'cuda'
+    device: str = 'cpu'
 
 
 

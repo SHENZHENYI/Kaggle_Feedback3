@@ -143,7 +143,7 @@ class Trainer:
         train_losses_epoch = AverageMeter()
         start = time.time()
         for cur_step, batch in enumerate(self.train_loader):
-            for k, v in batch:
+            for k, v in batch.items():
                 batch[k] = to_cuda(v)
             _, losses = self.train_step(batch)
             train_losses_epoch.update(losses['loss'])
@@ -181,12 +181,13 @@ class Trainer:
 
         start = time.time()
         for cur_step, batch in enumerate(self.val_loader):
-            for k, v in batch:
+            for k, v in batch.items():
                 batch[k] = to_cuda(v)
             outputs, losses = self.val_step(batch)
             all_predictions.add_batch(outputs['labels'])
             all_groudtruths.add_batch(batch['labels'])
             val_losses_epoch.update(losses['loss'])
+            break
         epoch_time = time.time() - start
 
         score = self.metric(torch.stack(all_groudtruths.all).numpy(),
@@ -207,7 +208,7 @@ class Trainer:
         self.train_loader = self.get_train_loader(self.train_samples, self.model)
         self.val_loader = self.get_val_loader(self.val_samples, self.model)
         for epoch in range(self.cfg.epoch):
-            self.train_epoch()
+            #self.train_epoch()
             self.val_epoch()
             self.epochs_done = epoch
             if self.cur_score <= self.best_score:

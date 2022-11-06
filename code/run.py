@@ -32,6 +32,7 @@ def main():
         )
 
         trainer.fit()
+        break
 
 
 
