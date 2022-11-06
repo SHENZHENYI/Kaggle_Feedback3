@@ -7,12 +7,11 @@ from torch import nn
 import pandas as pd
 from typing import Callable, Dict, List, Tuple, Union
 
-from utils.train_utils import AverageMeter, count_parameters, KeepAll, to_cuda
+from src.utils.train_utils import AverageMeter, KeepAll, to_cuda, count_parameters
 
 class Trainer:
     """wrap the training process
     """
-
     def __init__(
         self,
         cfg: object,
@@ -59,6 +58,7 @@ class Trainer:
         self.logger.info(f'Model has {count_parameters(self.model)} parameters')
         self.logger.info(f'Model {self.model}')
 
+
     @staticmethod
     def get_logger(log_file: str):
         logger = logging.getLogger("trainer")
@@ -68,6 +68,7 @@ class Trainer:
         logger.addHandler(handler)
         logger.setLevel(logging.INFO)
         return logger
+
 
     ########################
     # DataLoader Methods
@@ -79,6 +80,7 @@ class Trainer:
         if hasattr(model, "get_train_loader"):
             train_loader = model.get_train_loader(df)
         return train_loader
+
 
     @staticmethod
     def get_val_loader(df: pd.DataFrame, model: nn.Module) -> torch.utils.data.DataLoader:
@@ -101,6 +103,7 @@ class Trainer:
         if hasattr(model, "train_step"):
             return model.train_step(batch, criterion)
         raise NotImplementedError
+
 
     def _optimize(
         self,
@@ -141,12 +144,15 @@ class Trainer:
     def train_epoch(self) -> None:
         self.model.train()
         train_losses_epoch = AverageMeter()
+        one_percent_step_idx = len(self.train_loader) // 100
         start = time.time()
         for cur_step, batch in enumerate(self.train_loader):
             for k, v in batch.items():
-                batch[k] = to_cuda(v)
+                batch[k] = to_cuda(v, self.cfg.device)
             _, losses = self.train_step(batch)
             train_losses_epoch.update(losses['loss'])
+            if cur_step % one_percent_step_idx == 0: # every 1% of total steps
+                self.logger.info(f'Batch{cur_step}: train_loss={losses["loss"]}')
 
         self.train_losses.append(train_losses_epoch.avg)
         epoch_time = time.time() - start
@@ -157,6 +163,7 @@ class Trainer:
     ########################
     # Evaluation Methods
     ########################
+
     @staticmethod
     def _model_eval_step(
         model: nn.Module, batch: Dict, criterion: nn.Module,
@@ -178,15 +185,19 @@ class Trainer:
         all_predictions = KeepAll()
         all_groudtruths = KeepAll()
         val_losses_epoch = AverageMeter()
+        one_percent_step_idx = len(self.val_loader) // 100
 
         start = time.time()
         for cur_step, batch in enumerate(self.val_loader):
             for k, v in batch.items():
-                batch[k] = to_cuda(v)
+                batch[k] = to_cuda(v, self.cfg.device)
             outputs, losses = self.val_step(batch)
             all_predictions.add_batch(outputs['labels'])
             all_groudtruths.add_batch(batch['labels'])
             val_losses_epoch.update(losses['loss'])
+            if cur_step % one_percent_step_idx == 0: # every 1% of total steps
+                self.logger.info(f'Batch{cur_step}: val_loss={losses["loss"]}')
+
 
         epoch_time = time.time() - start
 
@@ -210,7 +221,7 @@ class Trainer:
         for epoch in range(self.cfg.epoch):
             self.train_epoch()
             self.val_epoch()
-            self.epochs_done = epoch
+            self.epochs_done = epoch+1
             if self.cur_score <= self.best_score:
                 self.best_score = self.cur_score
                 self.save_best_model()
@@ -222,12 +233,14 @@ class Trainer:
                     'score': self.best_score},
                     os.path.join(self.cfg.training_dir, f"{self.cfg.model.replace('/', '-')}_fold{self.fold}_best.pth"))
 
+
     @staticmethod
     def get_optimizer(model) -> torch.optim.Optimizer:
         optimizer = None
         if hasattr(model, "get_optimizer"):
             optimizer = model.get_optimizer()
         return optimizer
+
 
     @staticmethod
     def get_scheduler(model: nn.Module, optimizer: object, num_train_steps: int) -> object:
@@ -236,8 +249,10 @@ class Trainer:
             scheduler = model.get_scheduler(optimizer, num_train_steps)
         return scheduler
 
+
     def get_lr():
         pass 
+
 
     @staticmethod
     def get_criterion(model: nn.Module) -> nn.Module:
@@ -246,12 +261,14 @@ class Trainer:
             criterion = model.get_criterion()
         return criterion
 
+
     @staticmethod
     def get_metric(model: nn.Module) -> object:
         metric = None
         if hasattr(model, "get_metric"):
             metric = model.get_metric()
         return metric
+
 
     ########################
     # Helper Functions

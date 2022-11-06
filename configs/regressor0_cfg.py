@@ -7,7 +7,7 @@ class SimpleRegressorConfig():
     seed: int = 1997
     n_fold: int = 5
     target_columns: List[str] = field(default_factory=lambda: ['cohesion', 'syntax', 'vocabulary', 'phraseology', 'grammar', 'conventions'])
-    data_dir: str = '../data/fb3'
+    data_dir: str = './data/fb3'
     training_dir: str = './outputs'
     model: str = "microsoft/deberta-v3-base"
     criterion: str = 'l1'
@@ -16,7 +16,7 @@ class SimpleRegressorConfig():
     apex: bool = True
     num_workers: int = 4
     epoch: int = 5
-    batch_size: int = 2
+    batch_size: int = 8
     max_len: int = 512
     encoder_lr: float = 1e-5
     decoder_lr: float = 1e-4

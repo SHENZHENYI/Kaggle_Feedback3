@@ -1,0 +1,636 @@
+Model has 183836166 parameters
+Model BaselineRegressor(
+  (transformer): DebertaV2Model(
+    (embeddings): DebertaV2Embeddings(
+      (word_embeddings): Embedding(128100, 768, padding_idx=0)
+      (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+      (dropout): StableDropout()
+    )
+    (encoder): DebertaV2Encoder(
+      (layer): ModuleList(
+        (0): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (1): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (2): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (3): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (4): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (5): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (6): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (7): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (8): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (9): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (10): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (11): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+      )
+      (rel_embeddings): Embedding(512, 768)
+      (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+    )
+  )
+  (pool): MeanPooling()
+  (fc): Linear(in_features=768, out_features=6, bias=True)
+)
+Model has 183836166 parameters
+Model BaselineRegressor(
+  (transformer): DebertaV2Model(
+    (embeddings): DebertaV2Embeddings(
+      (word_embeddings): Embedding(128100, 768, padding_idx=0)
+      (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+      (dropout): StableDropout()
+    )
+    (encoder): DebertaV2Encoder(
+      (layer): ModuleList(
+        (0): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (1): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (2): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (3): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (4): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (5): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (6): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (7): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (8): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (9): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (10): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+        (11): DebertaV2Layer(
+          (attention): DebertaV2Attention(
+            (self): DisentangledSelfAttention(
+              (query_proj): Linear(in_features=768, out_features=768, bias=True)
+              (key_proj): Linear(in_features=768, out_features=768, bias=True)
+              (value_proj): Linear(in_features=768, out_features=768, bias=True)
+              (pos_dropout): StableDropout()
+              (dropout): StableDropout()
+            )
+            (output): DebertaV2SelfOutput(
+              (dense): Linear(in_features=768, out_features=768, bias=True)
+              (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+              (dropout): StableDropout()
+            )
+          )
+          (intermediate): DebertaV2Intermediate(
+            (dense): Linear(in_features=768, out_features=3072, bias=True)
+            (intermediate_act_fn): GELUActivation()
+          )
+          (output): DebertaV2Output(
+            (dense): Linear(in_features=3072, out_features=768, bias=True)
+            (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+            (dropout): StableDropout()
+          )
+        )
+      )
+      (rel_embeddings): Embedding(512, 768)
+      (LayerNorm): LayerNorm((768,), eps=1e-07, elementwise_affine=True)
+    )
+  )
+  (pool): MeanPooling()
+  (fc): Linear(in_features=768, out_features=6, bias=True)
+)

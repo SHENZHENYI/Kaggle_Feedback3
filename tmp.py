@@ -3,8 +3,8 @@ import pandas as pd
 from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 
 from configs.regressor0_cfg import SimpleRegressorConfig
-from models.regressors import BaselineRegressor
-from utils.trainer import Trainer
+from src.models.regressors import BaselineRegressor
+from src.utils.trainer import Trainer
 
 def main():
     cfg = SimpleRegressorConfig()

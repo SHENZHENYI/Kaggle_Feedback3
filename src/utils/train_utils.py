@@ -8,7 +8,9 @@ from transformers import AutoConfig, AutoModel, AutoTokenizer, \
                          get_linear_schedule_with_warmup
 from typing import Dict, List, Tuple
 
-def to_cuda(x: torch.Tensor) -> torch.Tensor:
+def to_cuda(x: torch.Tensor, device: str) -> torch.Tensor:
+    if device == 'cpu':
+        return x
     if x is None:
         return None
     if torch.is_tensor(x):

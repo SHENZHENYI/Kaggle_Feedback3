@@ -9,10 +9,10 @@ from transformers import AutoConfig, AutoModel, AutoTokenizer, \
                          get_linear_schedule_with_warmup
 from typing import Dict, List, Tuple
 
-from models.model import BaseModel
-from models.layers import MeanPooling
-from data.dataset import collate, Feedback3Dataset
-from utils.train_utils import get_scheduler, mcrmse
+from src.models.model import BaseModel
+from src.models.layers import MeanPooling
+from src.data.dataset import collate, Feedback3Dataset
+from src.utils.train_utils import get_scheduler, mcrmse
 
 class BaselineRegressor(BaseModel):
     """A simple regression model using the representations from a pretrained model like DEBERTA
