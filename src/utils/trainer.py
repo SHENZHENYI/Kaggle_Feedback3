@@ -42,12 +42,12 @@ class Trainer:
         self.val_samples = val_samples
         self.test_samples = test_samples
         self.device = device
+        self.model = model.to(device)
         if checkpoint_path is not None:
             self._model_load_checkpoint(checkpoint_path)
             self.tokenizer = model.get_tokenizer(instantiate=False)
         else:
             self.tokenizer = model.get_tokenizer(instantiate=True)
-        self.model = model.to(device)
         self.optimizer = self.get_optimizer(self.model)
         self.criterion = self.get_criterion(self.model)
         self.metric = self.get_metric(self.model)
@@ -220,6 +220,10 @@ class Trainer:
         self.logger.info(f'Epoch{self.epochs_done}: loss={val_losses_epoch.avg}; eval score={score}; {epoch_time} seconds')
         torch.cuda.empty_cache()
         gc.collect()
+
+    ########################
+    # Inference Methods
+    ########################
 
     @staticmethod
     def _model_inference(self,model: nn.Module, batch: Dict) -> Dict:
