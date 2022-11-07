@@ -48,11 +48,12 @@ class Trainer:
             self.tokenizer = model.get_tokenizer(instantiate=False)
         else:
             self.tokenizer = model.get_tokenizer(instantiate=True)
-        self.optimizer = self.get_optimizer(self.model)
         self.criterion = self.get_criterion(self.model)
         self.metric = self.get_metric(self.model)
-        num_training_steps = cfg.epoch * len(train_samples) // cfg.batch_size
-        self.scheduler = self.get_scheduler(self.model, self.optimizer, num_training_steps)
+        if train_samples is not None:
+            self.optimizer = self.get_optimizer(self.model)
+            num_training_steps = cfg.epoch * len(train_samples) // cfg.batch_size
+            self.scheduler = self.get_scheduler(self.model, self.optimizer, num_training_steps)
         if cfg.apex:
             self.scaler = torch.cuda.amp.GradScaler()
         else:
