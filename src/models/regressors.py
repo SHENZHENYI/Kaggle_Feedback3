@@ -1,3 +1,4 @@
+import os
 import torch
 from torch import nn
 from torch.optim import AdamW
@@ -57,31 +58,45 @@ class BaselineRegressor(BaseModel):
         loss = criterion(out, batch['labels'])
         return {'labels': out}, {'loss': loss}
 
-    def eval_step(self, batch: Dict, criterion: nn.Module) -> Tuple[Dict, torch.Tensor]:
+    def eval_step(self, batch: Dict, criterion: nn.Module) -> Tuple[Dict, Dict]:
         return self.train_step(batch, criterion)
 
-    def get_train_loader(self, df: pd.DataFrame):
-        train_dataset = Feedback3Dataset(self.cfg, self.get_tokenizer(), df, 'train')
+    def inference(self, batch: Dict) -> Dict:
+        batch = collate(batch)
+        out = self.forward(batch['input_ids'], batch['attention_mask'])
+        return {'labels': out}
+
+    def get_train_loader(self, df: pd.DataFrame, tokenizer: object):
+        train_dataset = Feedback3Dataset(self.cfg, tokenizer, df, 'train')
         train_loader = DataLoader(train_dataset,
                                   batch_size=self.cfg.batch_size,
                                   shuffle=True,
                                   num_workers=self.cfg.num_workers, pin_memory=True, drop_last=True)
         return train_loader
 
-    def get_val_loader(self, df: pd.DataFrame):
-        valid_dataset = Feedback3Dataset(self.cfg, self.get_tokenizer(), df, 'valid')
+    def get_val_loader(self, df: pd.DataFrame, tokenizer: object):
+        valid_dataset = Feedback3Dataset(self.cfg, tokenizer, df, 'valid')
         valid_loader = DataLoader(valid_dataset,
                                   batch_size=self.cfg.batch_size*2,
                                   shuffle=False,
                                   num_workers=self.cfg.num_workers, pin_memory=True, drop_last=False)
         return valid_loader
 
-    def load_checkpoint(self):
-        pass
+    def get_test_loader(self, df: pd.DataFrame, tokenizer: object):
+        test_dataset = Feedback3Dataset(self.cfg, tokenizer, df, 'test')
+        test_loader = DataLoader(test_dataset,
+                                  batch_size=self.cfg.batch_size*2,
+                                  shuffle=False,
+                                  num_workers=self.cfg.num_workers, pin_memory=True, drop_last=False)
+        return test_loader
 
 
-    def get_tokenizer(self):
-        tokenizer = AutoTokenizer.from_pretrained(self.cfg.model, use_fast=True)
+    def get_tokenizer(self, instantiate=False):
+        if instantiate:
+            tokenizer = AutoTokenizer.from_pretrained(self.cfg.model, use_fast=True)
+            tokenizer.save_pretrained(os.path.join(self.cfg.training_dir, 'tokenizer/'))
+        else:
+            tokenizer = AutoTokenizer.from_pretrained(os.path.join(self.cfg.training_dir, 'tokenizer/'))
         return tokenizer
 
     def get_metric(self) -> object:

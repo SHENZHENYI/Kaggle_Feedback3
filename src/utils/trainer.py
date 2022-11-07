@@ -21,7 +21,8 @@ class Trainer:
         train_samples: Union[List, pd.DataFrame] = None,
         val_samples: Union[List, pd.DataFrame] = None,
         test_samples: Union[List, pd.DataFrame] = None,
-        device: str = 'cpu'
+        device: str = 'cpu',
+        checkpoint_path: str = None,
         ):
 
         self.steps_done = 0
@@ -41,6 +42,11 @@ class Trainer:
         self.val_samples = val_samples
         self.test_samples = test_samples
         self.device = device
+        if checkpoint_path is not None:
+            self._model_load_checkpoint(checkpoint_path)
+            self.tokenizer = model.get_tokenizer(instantiate=False)
+        else:
+            self.tokenizer = model.get_tokenizer(instantiate=True)
         self.model = model.to(device)
         self.optimizer = self.get_optimizer(self.model)
         self.criterion = self.get_criterion(self.model)
@@ -75,22 +81,26 @@ class Trainer:
     ########################
 
     @staticmethod
-    def get_train_loader(df: pd.DataFrame, model: nn.Module) -> torch.utils.data.DataLoader:
+    def get_train_loader(df: pd.DataFrame, model: nn.Module, tokenizer: object) -> torch.utils.data.DataLoader:
         train_loader = None
         if hasattr(model, "get_train_loader"):
-            train_loader = model.get_train_loader(df)
+            train_loader = model.get_train_loader(df, tokenizer)
         return train_loader
 
 
     @staticmethod
-    def get_val_loader(df: pd.DataFrame, model: nn.Module) -> torch.utils.data.DataLoader:
+    def get_val_loader(df: pd.DataFrame, model: nn.Module, tokenizer: object) -> torch.utils.data.DataLoader:
         val_loader = None
         if hasattr(model, "get_val_loader"):
-            val_loader = model.get_val_loader(df)
+            val_loader = model.get_val_loader(df, tokenizer)
         return val_loader
 
-    def get_test_loader():
-        pass 
+    @staticmethod
+    def get_test_loader(df: pd.DataFrame, model: nn.Module, tokenizer: object) -> torch.utils.data.DataLoader:
+        test_loader = None
+        if hasattr(model, "get_test_loader"):
+            test_loader = model.get_test_loader(df, tokenizer)
+        return test_loader
 
     ########################
     # Training Methods
@@ -144,7 +154,7 @@ class Trainer:
     def train_epoch(self) -> None:
         self.model.train()
         train_losses_epoch = AverageMeter()
-        one_percent_step_idx = len(self.train_loader) // 100
+        one_percent_step_idx = len(self.train_loader) // 10
         start = time.time()
         for cur_step, batch in enumerate(self.train_loader):
             for k, v in batch.items():
@@ -185,7 +195,7 @@ class Trainer:
         all_predictions = KeepAll()
         all_groudtruths = KeepAll()
         val_losses_epoch = AverageMeter()
-        one_percent_step_idx = len(self.val_loader) // 100
+        one_percent_step_idx = len(self.val_loader) // 10
 
         start = time.time()
         for cur_step, batch in enumerate(self.val_loader):
@@ -204,7 +214,6 @@ class Trainer:
         score = self.metric(torch.stack(all_groudtruths.all).numpy(),
                             torch.stack(all_predictions.all).numpy())
         self.cur_score = score
-        
         self.scores.append(score)
         self.val_losses.append(val_losses_epoch.avg)
 
@@ -212,12 +221,40 @@ class Trainer:
         torch.cuda.empty_cache()
         gc.collect()
 
+    @staticmethod
+    def _model_inference(self,model: nn.Module, batch: Dict) -> Dict:
+        if hasattr(model, "get_metric"):
+            return model.inference(batch)
+        raise NotImplementedError
+
+
+    def inference_step(self, batch: Dict) -> Tuple[Dict, Dict]:
+        with torch.no_grad():
+            outputs = self._model_inference(self.model, batch)
+        return outputs
+
+
+    def inference(self) -> None:
+        self.test_loader = self.get_test_loader(self.test_samples, self.model, self.tokenizer)
+        self.model.eval()
+        all_predictions = KeepAll()
+
+        start = time.time()
+        for cur_step, batch in enumerate(self.test_loader):
+            for k, v in batch.items():
+                batch[k] = to_cuda(v, self.cfg.device)
+            outputs = self.inference_step(batch)
+            all_predictions.add_batch(outputs['labels'])
+
+        self.logger.info(f'Done inference. Took {time.time() - start} seconds.')
+        torch.cuda.empty_cache()
+        gc.collect()
 
     def fit(self) -> None:
         """train and evaluate
         """
-        self.train_loader = self.get_train_loader(self.train_samples, self.model)
-        self.val_loader = self.get_val_loader(self.val_samples, self.model)
+        self.train_loader = self.get_train_loader(self.train_samples, self.model, self.tokenizer)
+        self.val_loader = self.get_val_loader(self.val_samples, self.model, self.tokenizer)
         for epoch in range(self.cfg.epoch):
             self.train_epoch()
             self.val_epoch()
@@ -228,11 +265,14 @@ class Trainer:
                 self.logger.info(f'Epoch{epoch} - Save Best Score: {self.best_score:.4f}')
 
 
-    def save_best_model(self):
+    def save_best_model(self) -> None:
         torch.save({'model': self.model.state_dict(),
                     'score': self.best_score},
                     os.path.join(self.cfg.training_dir, f"{self.cfg.model.replace('/', '-')}_fold{self.fold}_best.pth"))
 
+    def _model_load_checkpoint(self, checkpoint_path: str) -> None:
+        state = torch.load(checkpoint_path, map_location=torch.device('cpu'))
+        self.model.load_state_dict(state['model'])
 
     @staticmethod
     def get_optimizer(model) -> torch.optim.Optimizer:
