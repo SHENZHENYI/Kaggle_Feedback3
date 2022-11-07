@@ -227,7 +227,7 @@ class Trainer:
     ########################
 
     @staticmethod
-    def _model_inference(self,model: nn.Module, batch: Dict) -> Dict:
+    def _model_inference(model: nn.Module, batch: Dict) -> Dict:
         if hasattr(model, "get_metric"):
             return model.inference(batch)
         raise NotImplementedError
@@ -239,7 +239,7 @@ class Trainer:
         return outputs
 
 
-    def inference(self) -> None:
+    def inference(self) -> Dict:
         self.test_loader = self.get_test_loader(self.test_samples, self.model, self.tokenizer)
         self.model.eval()
         all_predictions = KeepAll()
@@ -254,6 +254,7 @@ class Trainer:
         self.logger.info(f'Done inference. Took {time.time() - start} seconds.')
         torch.cuda.empty_cache()
         gc.collect()
+        return all_predictions
 
     def fit(self) -> None:
         """train and evaluate
