@@ -63,17 +63,22 @@ class Trainer:
         self.logger = self.get_logger(log_file)
 
         self.logger.info(f'Model has {count_parameters(self.model)} parameters')
-        self.logger.info(f'Model {self.model}')
+        #self.logger.info(f'Model {self.model}')
 
 
     @staticmethod
     def get_logger(log_file: str):
         logger = logging.getLogger("trainer")
         handler = logging.FileHandler(log_file, mode="w")
-        fmt = logging.Formatter("")
+        fmt = logging.Formatter("%(asctime)s:%(levelname)s:%(message)s")
         handler.setFormatter(fmt)
         logger.addHandler(handler)
-        logger.setLevel(logging.INFO)
+
+        stream = logging.StreamHandler()
+        stream.setLevel(logging.INFO)
+        streamformat = logging.Formatter("%(asctime)s:%(levelname)s:%(message)s")
+        stream.setFormatter(streamformat)
+        logger.addHandler(stream)
         return logger
 
 
