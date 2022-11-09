@@ -36,6 +36,16 @@ class AverageMeter(object):
         self.count += n
         self.avg = self.sum / self.count
 
+class KeepAll:
+    def __init__(self):
+        self.all = []
+
+    def add_batch(self, batch: torch.Tensor):
+        """ the first dim is batch
+        """
+        for x in batch.detach().cpu():
+            self.all.append(x)
+
 def get_scheduler(scheduler: str, 
                   optimizer: object, 
                   num_train_steps: int, 
@@ -67,21 +77,14 @@ def get_scheduler(scheduler: str,
         )
     return scheduler
 
-def mcrmse(targets: np.array, predictions: np.array) -> np.float32:
-    colwise_mse = np.mean(np.square(targets - predictions), axis=0)
-    print('colwise_mse', colwise_mse.shape)
-    return np.mean(np.sqrt(colwise_mse), axis=0)
+def mcrmse(targets: np.array, predictions: np.array) -> Tuple[np.float32, List[np.float32]]:
+    rms_scores = np.sqrt(np.mean(np.square(targets - predictions), axis=0))
+    return np.mean(rms_scores, axis=0)
+
+def rmse_scores(targets: np.array, predictions: np.array) -> Tuple[np.float32, List[np.float32]]:
+    rms_scores = np.sqrt(np.mean(np.square(targets - predictions), axis=0))
+    return rms_scores
 
 def count_parameters(model: nn.Module):
     r"""Count number of trainable parameters in a network"""
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
-
-class KeepAll:
-    def __init__(self):
-        self.all = []
-
-    def add_batch(self, batch: torch.Tensor):
-        """ the first dim is batch
-        """
-        for x in batch.detach().cpu():
-            self.all.append(x)

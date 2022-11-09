@@ -13,7 +13,7 @@ from typing import Dict, List, Tuple
 from src.models.model import BaseModel
 from src.models.layers import MeanPooling
 from src.data.dataset import collate, Feedback3Dataset
-from src.utils.train_utils import get_scheduler, mcrmse
+from src.utils.train_utils import get_scheduler, mcrmse, rmse_scores
 
 class BaselineRegressor(BaseModel):
     """A simple regression model using the representations from a pretrained model like DEBERTA
@@ -99,11 +99,17 @@ class BaselineRegressor(BaseModel):
             tokenizer = AutoTokenizer.from_pretrained(os.path.join(self.cfg.training_dir, 'tokenizer/'))
         return tokenizer
 
+    def save_config(self):
+        torch.save(self.config, os.path.join(self.cfg.training_dir, 'config.pth'))
+
     def get_metric(self) -> object:
         """ get a metric function
         mcrmse(target: np.array, pred: np.array) -> float
         """
         return mcrmse
+    
+    def get_metric_auxilary(self) -> object:
+        return rmse_scores
 
     def get_criterion(self) -> nn.Module:
         if self.cfg.criterion == 'l1':

@@ -45,11 +45,15 @@ class Trainer:
         self.model = model.to(device)
         if checkpoint_path is not None:
             self._model_load_checkpoint(checkpoint_path)
-            self.tokenizer = model.get_tokenizer(instantiate=False)
+            self.tokenizer = self.model.get_tokenizer(instantiate=False)
+            
         else:
-            self.tokenizer = model.get_tokenizer(instantiate=True)
+            self.tokenizer = self.model.get_tokenizer(instantiate=True)
+            self.model.save_config()
+
         self.criterion = self.get_criterion(self.model)
         self.metric = self.get_metric(self.model)
+        self.auxilary_metric = self.get_metric_auxilary(self.model)
         if train_samples is not None:
             self.optimizer = self.get_optimizer(self.model)
             num_training_steps = cfg.epoch * len(train_samples) // cfg.batch_size
@@ -148,31 +152,35 @@ class Trainer:
 
 
     def train_step(self, batch: Dict) -> Tuple[Dict, Dict]:
+        start = time.time()
         outputs, losses = self._optimize(batch, self.model, self.optimizer, self.scaler, \
                                     self.criterion, self.scheduler)
-        
+        elapsed = time.time() - start
         # just in case
         self.model.zero_grad(set_to_none=True)
         self.steps_done += 1
-        return outputs, losses
+        return outputs, losses, elapsed
 
 
     def train_epoch(self) -> None:
         self.model.train()
         train_losses_epoch = AverageMeter()
-        one_percent_step_idx = len(self.train_loader) // 10
         start = time.time()
         for cur_step, batch in enumerate(self.train_loader):
             for k, v in batch.items():
                 batch[k] = to_cuda(v, self.cfg.device)
-            _, losses = self.train_step(batch)
+            _, losses, elapsed = self.train_step(batch)
             train_losses_epoch.update(losses['loss'])
-            if cur_step % one_percent_step_idx == 0: # every 1% of total steps
-                self.logger.info(f'Batch{cur_step}: train_loss={losses["loss"]}')
+            if cur_step % self.cfg.print_freq == 0 or cur_step == (len(self.train_loader)-1):
+                self.logger.info(
+                    f"""Epoch: {self.epochs_done+1}[{cur_step}/{len(self.train_loader)}]
+                        Elapsed: {elapsed}
+                        Loss: {losses['loss']:.4f}"""
+                )
 
         self.train_losses.append(train_losses_epoch.avg)
         epoch_time = time.time() - start
-        self.logger.info(f'Epoch{self.epochs_done}: train_loss={train_losses_epoch.avg}; {epoch_time} seconds')
+        self.logger.info(f'Epoch{self.epochs_done} overall info: avg_train_loss={train_losses_epoch.avg}; {epoch_time} seconds')
         torch.cuda.empty_cache()
         gc.collect()
 
@@ -190,10 +198,12 @@ class Trainer:
 
 
     def val_step(self, batch: Dict) -> Tuple[Dict, Dict]:
+        start = time.time()
         with torch.no_grad():
             outputs, losses = self._model_eval_step(self.model, batch, self.criterion)
+        elapsed = time.time() - start
         losses = self._detach_loss_dict(losses)
-        return outputs, losses
+        return outputs, losses, elapsed
 
 
     def val_epoch(self) -> None:
@@ -207,23 +217,36 @@ class Trainer:
         for cur_step, batch in enumerate(self.val_loader):
             for k, v in batch.items():
                 batch[k] = to_cuda(v, self.cfg.device)
-            outputs, losses = self.val_step(batch)
+            outputs, losses, elapsed = self.val_step(batch)
             all_predictions.add_batch(outputs['labels'])
             all_groudtruths.add_batch(batch['labels'])
             val_losses_epoch.update(losses['loss'])
-            if cur_step % one_percent_step_idx == 0: # every 1% of total steps
+            if cur_step % self.cfg.print_freq == 0 or cur_step == (len(self.val_loader)-1):
                 self.logger.info(f'Batch{cur_step}: val_loss={losses["loss"]}')
+                self.logger.info(
+                    f"""VALIDATION: [{cur_step}/{len(self.val_loader)}]
+                        Elapsed: {elapsed}
+                        Loss: {losses['loss']:.4f}"""
+                )
 
 
         epoch_time = time.time() - start
 
         score = self.metric(torch.stack(all_groudtruths.all).numpy(),
                             torch.stack(all_predictions.all).numpy())
+        if self.auxilary_metric is not None:
+            auxilary_score = self.auxilary_metric(torch.stack(all_groudtruths.all).numpy(),
+                                                  torch.stack(all_predictions.all).numpy())
+
         self.cur_score = score
         self.scores.append(score)
         self.val_losses.append(val_losses_epoch.avg)
 
-        self.logger.info(f'Epoch{self.epochs_done}: loss={val_losses_epoch.avg}; eval score={score}; {epoch_time} seconds')
+        self.logger.info(f'Epoch{self.epochs_done}: avg_val_loss={val_losses_epoch.avg}')
+        if self.auxilary_metric is not None:
+            self.logger.info(f'Scores={score}; Auxilary Sccore={auxilary_score}; {epoch_time} seconds')
+        else:
+            self.logger.info(f'Scores={score}; {epoch_time} seconds')
         torch.cuda.empty_cache()
         gc.collect()
 
@@ -233,7 +256,7 @@ class Trainer:
 
     @staticmethod
     def _model_inference(model: nn.Module, batch: Dict) -> Dict:
-        if hasattr(model, "get_metric"):
+        if hasattr(model, "inference"):
             return model.inference(batch)
         raise NotImplementedError
 
@@ -320,6 +343,14 @@ class Trainer:
             metric = model.get_metric()
         return metric
 
+    @staticmethod
+    def get_metric_auxilary(model: nn.Module) -> object:
+        metric = None
+        if hasattr(model, "get_metric_auxilary"):
+            metric = model.get_metric_auxilary()
+            return metric
+        else:
+            return None
 
     ########################
     # Helper Functions
