@@ -15,7 +15,7 @@ class SimpleRegressorConfig():
     gradient_checkpointing: bool = True
     apex: bool = True
     num_workers: int = 4
-    epoch: int = 5
+    epoch: int = 10
     batch_size: int = 8
     max_len: int = 512
     encoder_lr: float = 1e-5
