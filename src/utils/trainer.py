@@ -46,7 +46,6 @@ class Trainer:
         if checkpoint_path is not None:
             self._model_load_checkpoint(checkpoint_path)
             self.tokenizer = self.model.get_tokenizer(instantiate=False)
-            
         else:
             self.tokenizer = self.model.get_tokenizer(instantiate=True)
             self.model.save_config()
@@ -72,17 +71,14 @@ class Trainer:
 
     @staticmethod
     def get_logger(log_file: str):
-        logger = logging.getLogger("trainer")
-        handler = logging.FileHandler(log_file, mode="w")
-        fmt = logging.Formatter("%(asctime)s:%(levelname)s:%(message)s")
-        handler.setFormatter(fmt)
-        logger.addHandler(handler)
-
-        stream = logging.StreamHandler()
-        stream.setLevel(logging.INFO)
-        streamformat = logging.Formatter("%(asctime)s:%(levelname)s:%(message)s")
-        stream.setFormatter(streamformat)
-        logger.addHandler(stream)
+        logger = logging.getLogger('trainer')
+        logger.setLevel(logging.INFO)
+        handler1 = logging.StreamHandler()
+        handler1.setFormatter(logging.Formatter("%(message)s"))
+        handler2 = logging.FileHandler(filename=f"{log_file}")
+        handler2.setFormatter(logging.Formatter("%(message)s"))
+        logger.addHandler(handler1)
+        logger.addHandler(handler2)
         return logger
 
 
@@ -151,7 +147,7 @@ class Trainer:
         return outputs_dict, losses_dict_detached
 
 
-    def train_step(self, batch: Dict) -> Tuple[Dict, Dict]:
+    def train_step(self, batch: Dict) -> Tuple[Dict, Dict, float]:
         start = time.time()
         outputs, losses = self._optimize(batch, self.model, self.optimizer, self.scaler, \
                                     self.criterion, self.scheduler)
@@ -170,13 +166,10 @@ class Trainer:
             for k, v in batch.items():
                 batch[k] = to_cuda(v, self.cfg.device)
             _, losses, elapsed = self.train_step(batch)
+
             train_losses_epoch.update(losses['loss'])
             if cur_step % self.cfg.print_freq == 0 or cur_step == (len(self.train_loader)-1):
-                self.logger.info(
-                    f"""Epoch: {self.epochs_done+1}[{cur_step}/{len(self.train_loader)}]
-                        Elapsed: {elapsed}
-                        Loss: {losses['loss']:.4f}"""
-                )
+                self.logger.info(f"Epoch: {self.epochs_done+1}[{cur_step}/{len(self.train_loader)}] Elapsed: {elapsed} Loss: {losses['loss']:.4f}")
 
         self.train_losses.append(train_losses_epoch.avg)
         epoch_time = time.time() - start
@@ -197,7 +190,7 @@ class Trainer:
         raise NotImplementedError
 
 
-    def val_step(self, batch: Dict) -> Tuple[Dict, Dict]:
+    def val_step(self, batch: Dict) -> Tuple[Dict, Dict, float]:
         start = time.time()
         with torch.no_grad():
             outputs, losses = self._model_eval_step(self.model, batch, self.criterion)
@@ -228,7 +221,6 @@ class Trainer:
                         Elapsed: {elapsed}
                         Loss: {losses['loss']:.4f}"""
                 )
-
 
         epoch_time = time.time() - start
 
@@ -337,14 +329,14 @@ class Trainer:
 
 
     @staticmethod
-    def get_metric(model: nn.Module) -> object:
+    def get_metric(model: nn.Module) -> Callable:
         metric = None
         if hasattr(model, "get_metric"):
             metric = model.get_metric()
         return metric
 
     @staticmethod
-    def get_metric_auxilary(model: nn.Module) -> object:
+    def get_metric_auxilary(model: nn.Module) -> Callable:
         metric = None
         if hasattr(model, "get_metric_auxilary"):
             metric = model.get_metric_auxilary()

@@ -12,7 +12,7 @@ class SimpleRegressorConfig():
     model: str = "microsoft/deberta-v3-base"
     criterion: str = 'l2'
     plm_size: int = 768
-    gradient_checkpointing: bool = True
+    gradient_checkpointing: bool = False
     apex: bool = True
     num_workers: int = 4
     epoch: int = 10

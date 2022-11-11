@@ -8,7 +8,7 @@ from transformers import AutoConfig, AutoModel, AutoTokenizer, \
                          get_cosine_schedule_with_warmup, \
                          get_cosine_with_hard_restarts_schedule_with_warmup, \
                          get_linear_schedule_with_warmup
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Callable
 
 from src.models.model import BaseModel
 from src.models.layers import MeanPooling
@@ -26,16 +26,16 @@ class BaselineRegressor(BaseModel):
     ):
         super().__init__()
         if cfg_path is None:
-            self.config = AutoConfig.from_pretrained(cfg.model, output_hidden_states=True)
-            self.config.hidden_dropout = 0.
-            self.config.hidden_dropout_prob = 0.
-            self.config.attention_dropout = 0.
-            self.config.attention_probs_dropout_prob = 0.
+            self.model_config = AutoConfig.from_pretrained(cfg.model, output_hidden_states=True)
+            self.model_config.hidden_dropout = 0.
+            self.model_config.hidden_dropout_prob = 0.
+            self.model_config.attention_dropout = 0.
+            self.model_config.attention_probs_dropout_prob = 0.
         else:
             self.model_config = torch.load(cfg_path)
 
         if use_pretrained:
-            self.transformer = AutoModel.from_pretrained(cfg.model, config=self.config)
+            self.transformer = AutoModel.from_pretrained(cfg.model, config=self.model_config)
         else:
             self.transformer = AutoModel(self.model_config)
 
@@ -99,16 +99,16 @@ class BaselineRegressor(BaseModel):
             tokenizer = AutoTokenizer.from_pretrained(os.path.join(self.cfg.training_dir, 'tokenizer/'))
         return tokenizer
 
-    def save_config(self):
-        torch.save(self.config, os.path.join(self.cfg.training_dir, 'config.pth'))
+    def save_config(self) -> None:
+        torch.save(self.model_config, os.path.join(self.cfg.training_dir, 'config.pth'))
 
-    def get_metric(self) -> object:
+    def get_metric(self) -> Callable:
         """ get a metric function
         mcrmse(target: np.array, pred: np.array) -> float
         """
         return mcrmse
     
-    def get_metric_auxilary(self) -> object:
+    def get_metric_auxilary(self) -> Callable:
         return rmse_scores
 
     def get_criterion(self) -> nn.Module:
