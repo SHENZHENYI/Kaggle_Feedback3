@@ -2,7 +2,6 @@ import torch
 import pandas as pd
 from torch.utils.data import Dataset
 
-
 def prepare_input(text, tokenizer, max_len=512):
     inputs = tokenizer.encode_plus(
         text, 

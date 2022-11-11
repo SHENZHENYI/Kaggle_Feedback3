@@ -4,10 +4,7 @@ from torch import nn
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 import pandas as pd
-from transformers import AutoConfig, AutoModel, AutoTokenizer, \
-                         get_cosine_schedule_with_warmup, \
-                         get_cosine_with_hard_restarts_schedule_with_warmup, \
-                         get_linear_schedule_with_warmup
+from transformers import AutoConfig, AutoModel, AutoTokenizer
 from typing import Dict, List, Tuple, Callable
 
 from src.models.model import BaseModel
@@ -37,7 +34,7 @@ class BaselineRegressor(BaseModel):
         if use_pretrained:
             self.transformer = AutoModel.from_pretrained(cfg.model, config=self.model_config)
         else:
-            self.transformer = AutoModel(self.model_config)
+            self.transformer = AutoModel.from_config(self.model_config)
 
         if cfg.gradient_checkpointing:
             self.transformer.gradient_checkpointing_enable()

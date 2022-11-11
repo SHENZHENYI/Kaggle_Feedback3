@@ -173,7 +173,7 @@ class Trainer:
 
         self.train_losses.append(train_losses_epoch.avg)
         epoch_time = time.time() - start
-        self.logger.info(f'Epoch{self.epochs_done} overall info: avg_train_loss={train_losses_epoch.avg}; {epoch_time} seconds')
+        self.logger.info(f'Epoch{self.epochs_done+1} overall info: avg_train_loss={train_losses_epoch.avg}; {epoch_time} seconds')
         torch.cuda.empty_cache()
         gc.collect()
 
@@ -215,12 +215,7 @@ class Trainer:
             all_groudtruths.add_batch(batch['labels'])
             val_losses_epoch.update(losses['loss'])
             if cur_step % self.cfg.print_freq == 0 or cur_step == (len(self.val_loader)-1):
-                self.logger.info(f'Batch{cur_step}: val_loss={losses["loss"]}')
-                self.logger.info(
-                    f"""VALIDATION: [{cur_step}/{len(self.val_loader)}]
-                        Elapsed: {elapsed}
-                        Loss: {losses['loss']:.4f}"""
-                )
+                self.logger.info(f"VALIDATION: [{cur_step}/{len(self.val_loader)}] Elapsed: {elapsed} Loss: {losses['loss']:.4f}")
 
         epoch_time = time.time() - start
 
@@ -234,7 +229,7 @@ class Trainer:
         self.scores.append(score)
         self.val_losses.append(val_losses_epoch.avg)
 
-        self.logger.info(f'Epoch{self.epochs_done}: avg_val_loss={val_losses_epoch.avg}')
+        self.logger.info(f'Epoch{self.epochs_done+1}: avg_val_loss={val_losses_epoch.avg}')
         if self.auxilary_metric is not None:
             self.logger.info(f'Scores={score}; Auxilary Sccore={auxilary_score}; {epoch_time} seconds')
         else:
@@ -288,7 +283,7 @@ class Trainer:
             if self.cur_score <= self.best_score:
                 self.best_score = self.cur_score
                 self.save_best_model()
-                self.logger.info(f'Epoch{epoch} - Save Best Score: {self.best_score:.4f}')
+                self.logger.info(f'Epoch{epoch+1} - Save Best Score: {self.best_score:.4f}')
 
 
     def save_best_model(self) -> None:
