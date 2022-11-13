@@ -16,7 +16,6 @@ class Trainer:
         self,
         cfg: object,
         model: nn.Module,
-        out_dir: str,
         fold: int,
         train_samples: Union[List, pd.DataFrame] = None,
         val_samples: Union[List, pd.DataFrame] = None,
@@ -62,7 +61,7 @@ class Trainer:
         else:
             self.scaler = None
 
-        log_file = os.path.join(out_dir, f"trainer_logs.txt")
+        log_file = os.path.join(self.cfg.save_dir, f"trainer_logs.txt")
         self.logger = self.get_logger(log_file)
 
         self.logger.info(f'Model has {count_parameters(self.model)} parameters')
@@ -134,6 +133,9 @@ class Trainer:
             outputs_dict, losses_dict = self._model_train_step(model, batch, criterion)
 
         scaler.scale(losses_dict["loss"]).backward()
+
+        grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), self.cfg.max_grad_norm)
+
         scaler.step(optimizer)
         scaler.update()
         losses_dict["amp_scaler"] = scaler.get_scale()
@@ -204,7 +206,6 @@ class Trainer:
         all_predictions = KeepAll()
         all_groudtruths = KeepAll()
         val_losses_epoch = AverageMeter()
-        one_percent_step_idx = len(self.val_loader) // 10
 
         start = time.time()
         for cur_step, batch in enumerate(self.val_loader):
@@ -289,7 +290,7 @@ class Trainer:
     def save_best_model(self) -> None:
         torch.save({'model': self.model.state_dict(),
                     'score': self.best_score},
-                    os.path.join(self.cfg.training_dir, f"{self.cfg.model.replace('/', '-')}_fold{self.fold}_best.pth"))
+                    os.path.join(self.cfg.save_dir, f"{self.cfg.model.replace('/', '-')}_fold{self.fold}_best.pth"))
 
     def _model_load_checkpoint(self, checkpoint_path: str) -> None:
         state = torch.load(checkpoint_path, map_location=torch.device('cpu'))

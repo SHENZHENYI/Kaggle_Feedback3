@@ -42,13 +42,27 @@ class BaselineRegressor(BaseModel):
         self.cfg = cfg
         self.pool = MeanPooling()
         self.fc = nn.Linear(cfg.plm_size, len(cfg.target_columns))
+        self._init_weights(self.fc)
     
     def forward(self, inputs: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         last_hidden_state = self.transformer(input_ids=inputs, attention_mask=attention_mask)[0]
         features = self.pool(last_hidden_state, attention_mask)
         out = self.fc(features)
         return out
-    
+
+    def _init_weights(self, module):
+        if isinstance(module, nn.Linear):
+            module.weight.data.normal_(mean=0.0, std=self.model_config.initializer_range)
+            if module.bias is not None:
+                module.bias.data.zero_()
+        elif isinstance(module, nn.Embedding):
+            module.weight.data.normal_(mean=0.0, std=self.model_config.initializer_range)
+            if module.padding_idx is not None:
+                module.weight.data[module.padding_idx].zero_()
+        elif isinstance(module, nn.LayerNorm):
+            module.bias.data.zero_()
+            module.weight.data.fill_(1.0)
+
     def train_step(self, batch: Dict, criterion: nn.Module) -> Tuple[Dict, Dict]:
         batch = collate(batch)
         out = self.forward(batch['input_ids'], batch['attention_mask'])
@@ -91,13 +105,13 @@ class BaselineRegressor(BaseModel):
     def get_tokenizer(self, instantiate=False):
         if instantiate:
             tokenizer = AutoTokenizer.from_pretrained(self.cfg.model, use_fast=True)
-            tokenizer.save_pretrained(os.path.join(self.cfg.training_dir, 'tokenizer/'))
+            tokenizer.save_pretrained(os.path.join(self.cfg.save_dir, 'tokenizer/'))
         else:
-            tokenizer = AutoTokenizer.from_pretrained(os.path.join(self.cfg.training_dir, 'tokenizer/'))
+            tokenizer = AutoTokenizer.from_pretrained(os.path.join(self.cfg.load_dir, 'tokenizer/'))
         return tokenizer
 
     def save_config(self) -> None:
-        torch.save(self.model_config, os.path.join(self.cfg.training_dir, 'config.pth'))
+        torch.save(self.model_config, os.path.join(self.cfg.save_dir, 'config.pth'))
 
     def get_metric(self) -> Callable:
         """ get a metric function
@@ -142,3 +156,4 @@ class BaselineRegressor(BaseModel):
 
     def get_scheduler(self, optimizer: object, num_train_steps: int):
         return  get_scheduler(self.cfg.scheduler, optimizer, num_train_steps, self.cfg.warmup_ratio, self.cfg.num_cycles)
+
