@@ -71,6 +71,8 @@ class Trainer:
     @staticmethod
     def get_logger(log_file: str):
         logger = logging.getLogger('trainer')
+        if logger.hasHandlers():
+            logger.handlers.clear()
         logger.setLevel(logging.INFO)
         handler1 = logging.StreamHandler()
         handler1.setFormatter(logging.Formatter("%(message)s"))
@@ -154,7 +156,6 @@ class Trainer:
         outputs, losses = self._optimize(batch, self.model, self.optimizer, self.scaler, \
                                     self.criterion, self.scheduler)
         elapsed = time.time() - start
-        # just in case
         self.model.zero_grad(set_to_none=True)
         self.steps_done += 1
         return outputs, losses, elapsed
@@ -271,6 +272,14 @@ class Trainer:
         torch.cuda.empty_cache()
         gc.collect()
         return all_predictions
+
+
+    def evaluation(self) -> None:
+        """evaluate
+        """
+        self.val_loader = self.get_val_loader(self.val_samples, self.model, self.tokenizer)
+        self.val_epoch()
+
 
     def fit(self) -> None:
         """train and evaluate
