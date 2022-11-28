@@ -30,6 +30,9 @@ class SimpleRegressorConfig():
     print_freq: int = 20
     device: str = 'cpu'
     max_grad_norm: float = 1000
+    train_loader_apply_mask: bool = False
+    mask_prob: float = 0.8
+    mask_ratio: float = 0.3
 
 
 
